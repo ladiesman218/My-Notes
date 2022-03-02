@@ -7,33 +7,45 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+//protocol DetailVCDelegate {
+//	func noteDidChange(note: Note)
+//}
 
-	var fileURL: URL!
+class DetailViewController: UIViewController {
+	
+	var note: Note!
+	//	var delegate: DetailVCDelegate?
 	
 	@IBOutlet var textView: UITextView!
 	
 	override func viewDidLoad() {
-        super.viewDidLoad()
-		guard let string = try? String(contentsOf: fileURL) else {
-			fatalError("Can't read content of the given url")
-		}
-		textView.text = string
+		super.viewDidLoad()
+		textView.text = note.content
+		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
+		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+		self.navigationController?.isToolbarHidden = false
+		toolbarItems = [shareButton]
 		
 		let notificationCenter = NotificationCenter.default
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidHideNotification, object: nil)
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
-    }
-
+	}
+	
+	
 	override func viewWillDisappear(_ animated: Bool) {
-		let content = textView.text ?? ""
-		guard content != "" else {
-			try! FileManager.default.removeItem(at: fileURL)
+		note.content = textView.text!
+		
+		guard note.content != "" else {
+			let fileName = note.fileURL.lastPathComponent
+			let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+			let url = path.appendingPathComponent(fileName)
+			try! FileManager.default.removeItem(at: url)
 			return
 		}
-		try! content.write(toFile: fileURL.path, atomically: true, encoding: .utf8)
+		note.writeToDisk()
+		
 	}
-
+	
 	@objc func adjustForKeyboard(notification: Notification) {
 		guard let userInfo = notification.userInfo else {
 			return
@@ -51,6 +63,21 @@ class DetailViewController: UIViewController {
 		textView.scrollIndicatorInsets = textView.contentInset
 		let selectedRange = textView.selectedRange
 		textView.scrollRangeToVisible(selectedRange)
+	}
+	
+	@objc func remove() {
+		textView.text = ""
+		self.navigationController?.popViewController(animated: true)
+	}
+	
+	@objc func shareTapped() {
+		guard let text = textView.text, text != "" else { return }
+		
+		
+		let activityController = UIActivityViewController(activityItems: [text], applicationActivities: [
+		])
+		activityController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+		self.present(activityController, animated: true)
 		
 	}
 }

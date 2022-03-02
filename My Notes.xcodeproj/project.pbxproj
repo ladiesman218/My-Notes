@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B4285AEF27CE4BDD002CD6C8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */; };
+		B4285AF127CE80E4002CD6C8 /* Notes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4285AF027CE80E4002CD6C8 /* Notes.swift */; };
 		B4D1C6A827CE489F005394A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6A727CE489F005394A2 /* AppDelegate.swift */; };
 		B4D1C6AA27CE489F005394A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */; };
 		B4D1C6AC27CE489F005394A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6AB27CE489F005394A2 /* ViewController.swift */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		B4285AF027CE80E4002CD6C8 /* Notes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notes.swift; sourceTree = "<group>"; };
 		B4D1C6A427CE489F005394A2 /* My Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Notes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4D1C6A727CE489F005394A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				B4D1C6A727CE489F005394A2 /* AppDelegate.swift */,
 				B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */,
 				B4D1C6AB27CE489F005394A2 /* ViewController.swift */,
+				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
 				B4D1C6AD27CE489F005394A2 /* Main.storyboard */,
 				B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */,
 				B4D1C6B027CE48A1005394A2 /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4D1C6AC27CE489F005394A2 /* ViewController.swift in Sources */,
+				B4285AF127CE80E4002CD6C8 /* Notes.swift in Sources */,
 				B4D1C6A827CE489F005394A2 /* AppDelegate.swift in Sources */,
 				B4D1C6AA27CE489F005394A2 /* SceneDelegate.swift in Sources */,
 				B4285AEF27CE4BDD002CD6C8 /* DetailViewController.swift in Sources */,

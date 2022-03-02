@@ -8,9 +8,9 @@
 import UIKit
 
 class ViewController: UITableViewController {
-
-	var files: [URL] = [URL]()
+	
 	var path: URL!
+	var notes = [Note]()
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -21,44 +21,46 @@ class ViewController: UITableViewController {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-
-		files = []
 		
-		path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+		notes = []
+		
+		path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: [], options: []) {
 			for file in files {
-				if let _ = try? String(contentsOf: file) {
-					self.files.append(file)
+//				try! FileManager.default.removeItem(atPath: file.path)
+//				print(file)
+				let data = try! Data(contentsOf: file)
+				if let note = try? JSONDecoder().decode(Note.self, from: data) {
+					notes.append(note)
 				}
 			}
 		}
 		tableView.reloadData()
 	}
-
+	
 	@objc func editNew() {
 		guard let detailVC = self.storyboard?.instantiateViewController(withIdentifier: "Note") as? DetailViewController else {
-			print("Can't instantiate detail VC")
-			return
+			fatalError("Can't instantiate detailVC")
 		}
 		
 		let fileURL = path.appendingPathComponent(UUID().uuidString)
-
-		guard FileManager.default.createFile(atPath: fileURL.path, contents: Data(), attributes: nil) else {
-			print("Can't create new file")
-			return
-		}
-		detailVC.fileURL = fileURL
+		let note = Note(content: "", fileURL: fileURL)
+		note.writeToDisk()
+		
+		detailVC.note = note
+		
+		notes.append(note)
 		
 		self.navigationController?.pushViewController(detailVC, animated: true)
 	}
-
+	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return files.count
+		return notes.count
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
-		let string = try! String(contentsOf: files[indexPath.row])
+		let string = notes[indexPath.row].content
 		let subSequence = string.split(separator: "\n")
 		let title = String(subSequence.first ?? "")
 		let subTitle = (subSequence.count >= 2) ? String(subSequence[1]) : ""
@@ -72,22 +74,22 @@ class ViewController: UITableViewController {
 			print("Can't instantiate detail VC")
 			return
 		}
-		
-		detailVC.fileURL = files[indexPath.row]
+		detailVC.note = notes[indexPath.row]
 		self.navigationController?.pushViewController(detailVC, animated: true)
 	}
 	
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] action, table, handler in
 			//@escaping (Bool) -> Void
-			guard let file = self?.files[indexPath.row] else { return }
-			self?.files.remove(at: indexPath.row)
-			guard let _ = try? FileManager.default.removeItem(at: file) else { return }
+			guard let note = self?.notes.remove(at: indexPath.row) else { return }
+			// Can't directly delete note.fileURL, since that contains a random device UUID, which may change during different simulation
+			let fileName = note.fileURL.lastPathComponent
+			guard let url = self?.path.appendingPathComponent(fileName) else { return }
+			try! FileManager.default.removeItem(at: url)
 			tableView.deleteRows(at: [indexPath], with: .left)
 		}
 		return UISwipeActionsConfiguration(actions: [action])
 	}
-	
 	
 }
 
