@@ -7,9 +7,9 @@
 
 import UIKit
 
+
 class ViewController: UITableViewController {
 	
-	var path: URL!
 	var notes = [Note]()
 	
 	override func viewDidLoad() {
@@ -24,7 +24,6 @@ class ViewController: UITableViewController {
 		
 		notes = []
 		
-		path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: [], options: []) {
 			for file in files {
 //				try! FileManager.default.removeItem(atPath: file.path)
@@ -43,8 +42,7 @@ class ViewController: UITableViewController {
 			fatalError("Can't instantiate detailVC")
 		}
 		
-		let fileURL = path.appendingPathComponent(UUID().uuidString)
-		let note = Note(content: "", fileURL: fileURL)
+		let note = Note(content: "", fileName: UUID().uuidString)
 		note.writeToDisk()
 		
 		detailVC.note = note
@@ -82,10 +80,8 @@ class ViewController: UITableViewController {
 		let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] action, table, handler in
 			//@escaping (Bool) -> Void
 			guard let note = self?.notes.remove(at: indexPath.row) else { return }
-			// Can't directly delete note.fileURL, since that contains a random device UUID, which may change during different simulation
-			let fileName = note.fileURL.lastPathComponent
-			guard let url = self?.path.appendingPathComponent(fileName) else { return }
-			try! FileManager.default.removeItem(at: url)
+			note.removeFromDisk()
+			
 			tableView.deleteRows(at: [indexPath], with: .left)
 		}
 		return UISwipeActionsConfiguration(actions: [action])

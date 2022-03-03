@@ -7,17 +7,27 @@
 
 import UIKit
 
+let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+
 class Note:  Codable {
 	var content: String
-	var fileURL: URL
-
-	init(content: String, fileURL: URL) {
+	var fileName: String
+	// Can't save and use file url directly, since that contains a device UUID which may change during each run in simulator. Eg, a file path may be /Users/x/device/123/fileName this time, and /User/x/device/456/fileName next time.
+	var fileURL: URL {
+		path.appendingPathComponent(fileName)
+	}
+	
+	init(content: String, fileName: String) {
 		self.content = content
-		self.fileURL = fileURL
+		self.fileName = fileName
 	}
 	
 	func writeToDisk() {
 		let data = try! JSONEncoder().encode(self)
 		try! data.write(to: fileURL)
+	}
+	
+	func removeFromDisk() {
+		try! FileManager.default.removeItem(at: fileURL)
 	}
 }
