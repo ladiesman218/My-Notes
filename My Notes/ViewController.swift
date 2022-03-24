@@ -11,13 +11,37 @@ import UIKit
 class ViewController: UITableViewController {
 	
 	var notes = [Note]()
+	var tableHeader: UILabel!
+	var searchView: UIView!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.title = "备忘录"
+		
+		// Set up table header
+		tableHeader = UILabel()
+		tableHeader.text = headerString
+		tableHeader.font = .systemFont(ofSize: 30)
+		tableHeader.sizeToFit()		// tableHeaderView need to be given a height to be displayed
+		tableView.tableHeaderView = tableHeader
+		
+		// Set up search view
+		searchView = UIView()
+		
 		let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editNew))
 		self.toolbarItems = [.flexibleSpace(), addButton]
 		self.navigationController?.isToolbarHidden = false
+	}
+	
+	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+		print(scrollView.contentSize)
+		if scrollView.contentOffset.y > -0 {
+			tableHeader.isHidden = true
+			self.title = headerString
+		} else {
+			tableHeader.isHidden = false
+			self.title = ""
+		}
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -54,6 +78,10 @@ class ViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return notes.count
+	}
+	
+	override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+		
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

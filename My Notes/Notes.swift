@@ -7,7 +7,6 @@
 
 import UIKit
 
-let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 
 class Note:  Codable {
 	var content: String
