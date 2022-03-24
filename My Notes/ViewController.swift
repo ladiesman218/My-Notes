@@ -45,17 +45,11 @@ class ViewController: UITableViewController {
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		
-		notes = []
-		
-		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: [], options: []) {
-			for file in files {
-//				try! FileManager.default.removeItem(atPath: file.path)
-//				print(file)
-				let data = try! Data(contentsOf: file)
-				if let note = try? JSONDecoder().decode(Note.self, from: data) {
-					notes.append(note)
-				}
+		// Everytime view will appear, re-load notes array, and reload tableView
+		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: []) {
+			notes = files.map {
+				let data = try! Data(contentsOf: $0)
+				return try! JSONDecoder().decode(Note.self, from: data)
 			}
 		}
 		tableView.reloadData()
