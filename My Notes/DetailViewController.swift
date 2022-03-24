@@ -37,7 +37,7 @@ class DetailViewController: UIViewController {
 		
 		guard note.content != "" else {
 			let fileName = note.fileURL.lastPathComponent
-			let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+			
 			let url = path.appendingPathComponent(fileName)
 			try! FileManager.default.removeItem(at: url)
 			return

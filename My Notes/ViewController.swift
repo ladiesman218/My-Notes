@@ -8,14 +8,19 @@
 import UIKit
 
 
-class ViewController: UITableViewController {
+class ViewController: UIViewController {
 	
 	var notes = [Note]()
+	
 	var tableHeader: UILabel!
 	var searchView: UIView!
 	
+	@IBOutlet var tableView: UITableView!
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		tableView.dataSource = self
+		tableView.delegate = self
 		
 		// Set up table header
 		tableHeader = UILabel()
@@ -32,30 +37,13 @@ class ViewController: UITableViewController {
 		self.navigationController?.isToolbarHidden = false
 	}
 	
-	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-		print(scrollView.contentSize)
-		if scrollView.contentOffset.y > -0 {
-			tableHeader.isHidden = true
-			self.title = headerString
-		} else {
-			tableHeader.isHidden = false
-			self.title = ""
-		}
-	}
 	
 	override func viewWillAppear(_ animated: Bool) {
-		
-		notes = []
-		
-		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: [], options: []) {
-			for file in files {
-//				try! FileManager.default.removeItem(atPath: file.path)
-//				print(file)
-				let data = try! Data(contentsOf: file)
-				if let note = try? JSONDecoder().decode(Note.self, from: data) {
-					notes.append(note)
-				}
+		// Everytime view will appear, re-load notes array, and reload tableView
+		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: []) {
+			notes = files.map {
+				let data = try! Data(contentsOf: $0)
+				return try! JSONDecoder().decode(Note.self, from: data)
 			}
 		}
 		tableView.reloadData()
@@ -76,15 +64,16 @@ class ViewController: UITableViewController {
 		self.navigationController?.pushViewController(detailVC, animated: true)
 	}
 	
-	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+	
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return notes.count
 	}
 	
-	override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-		
-	}
-	
-	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
 		let string = notes[indexPath.row].content
 		let subSequence = string.split(separator: "\n")
@@ -95,7 +84,7 @@ class ViewController: UITableViewController {
 		return cell
 	}
 	
-	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		guard let detailVC = self.storyboard?.instantiateViewController(withIdentifier: "Note") as? DetailViewController else {
 			print("Can't instantiate detail VC")
 			return
@@ -104,7 +93,7 @@ class ViewController: UITableViewController {
 		self.navigationController?.pushViewController(detailVC, animated: true)
 	}
 	
-	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+	func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] action, table, handler in
 			//@escaping (Bool) -> Void
 			guard let note = self?.notes.remove(at: indexPath.row) else { return }
@@ -115,5 +104,15 @@ class ViewController: UITableViewController {
 		return UISwipeActionsConfiguration(actions: [action])
 	}
 	
-}
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
+		if scrollView.contentOffset.y > -0 {
+			tableHeader.isHidden = true
+			self.title = headerString
+		} else {
+			tableHeader.isHidden = false
+			self.title = ""
+		}
+	}
+	
+}
