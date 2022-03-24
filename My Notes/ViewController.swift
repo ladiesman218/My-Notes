@@ -13,7 +13,8 @@ class ViewController: UIViewController {
 	var notes = [Note]()
 	
 	var tableHeader: UILabel!
-	var searchView: UIView!
+//	@IBOutlet weak var searchView: UIView!
+//	var searchView: UIView!
 	
 	@IBOutlet var tableView: UITableView!
 	
@@ -30,7 +31,7 @@ class ViewController: UIViewController {
 		tableView.tableHeaderView = tableHeader
 		
 		// Set up search view
-		searchView = UIView()
+//		searchView.backgroundColor = .blue
 		
 		let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editNew))
 		self.toolbarItems = [.flexibleSpace(), addButton]
@@ -114,5 +115,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			self.title = ""
 		}
 	}
+	
+	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		let view = UIView()
+		view.backgroundColor = .yellow
+		return view
+	}
+	
 	
 }
