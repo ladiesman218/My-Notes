@@ -12,7 +12,7 @@ class ViewController: UITableViewController {
 	
 	var notes = [Note]()
 	var tableHeader: UILabel!
-	var searchView: UIView!
+//	var searchView: UIView!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -25,7 +25,7 @@ class ViewController: UITableViewController {
 		tableView.tableHeaderView = tableHeader
 		
 		// Set up search view
-		searchView = UIView()
+//		searchView = UIView()
 		
 		let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editNew))
 		self.toolbarItems = [.flexibleSpace(), addButton]
@@ -34,7 +34,6 @@ class ViewController: UITableViewController {
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-		print(scrollView.contentSize)
 		if scrollView.contentOffset.y > -0 {
 			tableHeader.isHidden = true
 			self.title = headerString
@@ -74,19 +73,39 @@ class ViewController: UITableViewController {
 		return notes.count
 	}
 	
-	override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-		
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return 2
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
-		let string = notes[indexPath.row].content
-		let subSequence = string.split(separator: "\n")
-		let title = String(subSequence.first ?? "")
-		let subTitle = (subSequence.count >= 2) ? String(subSequence[1]) : ""
-		cell.textLabel?.text = title
-		cell.detailTextLabel?.text = subTitle
-		return cell
+
+		if indexPath == [0, 0] {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "Search", for: indexPath)
+			let iconView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
+			iconView.translatesAutoresizingMaskIntoConstraints = false
+			cell.addSubview(iconView)
+			NSLayoutConstraint.activate([
+				iconView.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+				iconView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 15)
+			])
+			cell.heightAnchor.constraint(equalTo: cell.heightAnchor, multiplier: 1.5).isActive = true
+			cell.layer.cornerRadius = 5
+			cell.backgroundColor = .gray
+//			cell.contentView.inset
+//			tableView.contentInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+			cell.separatorInset.left = cell.bounds.size.width
+			return cell
+		} else {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
+			let string = notes[indexPath.row].content
+			let subSequence = string.split(separator: "\n")
+			let title = String(subSequence.first ?? "")
+			let subTitle = (subSequence.count >= 2) ? String(subSequence[1]) : ""
+			cell.textLabel?.text = title
+			cell.detailTextLabel?.text = subTitle
+			print(tableView.contentInset)
+			return cell
+		}
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -108,6 +127,21 @@ class ViewController: UITableViewController {
 		}
 		return UISwipeActionsConfiguration(actions: [action])
 	}
+	
+//	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//
+//		let searchView = UIView()
+//		searchView.translatesAutoresizingMaskIntoConstraints = false
+//		let iconView: UIImageView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
+//		searchView.addSubview(iconView)
+//        let textField = UITextField()
+//		searchView.addSubview(textField)
+//		textField.translatesAutoresizingMaskIntoConstraints = false
+//		textField.leadingAnchor.constraint(equalTo: iconView.trailingAnchor).isActive = true
+//		textField.trailingAnchor.constraint(equalTo: searchView.trailingAnchor).isActive = true
+//		textField.backgroundColor = .blue
+//		return searchView
+//	}
 	
 }
 
