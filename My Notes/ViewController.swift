@@ -23,16 +23,19 @@ class ViewController: UIViewController {
 		tableView.dataSource = self
 		tableView.delegate = self
 		
+		view.backgroundColor = .systemGray6
+		tableView.backgroundColor = view.backgroundColor
+//		tableView.backgroundColor = .systemBackground
+//		tableView.layer.cornerRadius = 10
+		
 		// Set up table header
 		tableHeader = UILabel()
 		tableHeader.text = headerString
+		tableHeader.backgroundColor = view.backgroundColor
 		tableHeader.font = .systemFont(ofSize: 30)
 		tableHeader.sizeToFit()		// tableHeaderView need to be given a height to be displayed
 		tableView.tableHeaderView = tableHeader
-		
-		// Set up search view
-//		searchView.backgroundColor = .blue
-		
+				
 		let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(editNew))
 		self.toolbarItems = [.flexibleSpace(), addButton]
 		self.navigationController?.isToolbarHidden = false
@@ -82,6 +85,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 		let subTitle = (subSequence.count >= 2) ? String(subSequence[1]) : ""
 		cell.textLabel?.text = title
 		cell.detailTextLabel?.text = subTitle
+		
+		cell.layer.backgroundColor = UIColor.systemBackground.cgColor
+		cell.layer.cornerRadius = 10
 		return cell
 	}
 	
