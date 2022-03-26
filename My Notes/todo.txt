@@ -1,0 +1,3 @@
+Remove last cell's separator
+remove Search view's separator
+

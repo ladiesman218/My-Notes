@@ -13,6 +13,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
 	
+	
 	var note: Note!
 	//	var delegate: DetailVCDelegate?
 	
@@ -29,8 +30,8 @@ class DetailViewController: UIViewController {
 		let notificationCenter = NotificationCenter.default
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidHideNotification, object: nil)
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
+		
 	}
-	
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		note.content = textView.text!
