@@ -24,7 +24,7 @@ class ViewController: UIViewController {
 		super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
-
+//		tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
 		// Setup background color
 		view.backgroundColor = .systemGray6
 		tableView.backgroundColor = view.backgroundColor
