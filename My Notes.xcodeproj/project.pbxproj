@@ -50,6 +50,8 @@
 		B423A05C27F595AB00F3D2BD /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */,
+				B4D1C6AB27CE489F005394A2 /* ViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -75,14 +77,12 @@
 			children = (
 				B4D1C6A727CE489F005394A2 /* AppDelegate.swift */,
 				B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */,
-				B4D1C6AB27CE489F005394A2 /* ViewController.swift */,
 				B423A05C27F595AB00F3D2BD /* View Controllers */,
 				B47E0FB727EEF7F800329FCF /* todo.txt */,
 				B47E0FB527EDC8AD00329FCF /* SearchCell.swift */,
 				B47E0FB327EC83CB00329FCF /* Global.swift */,
 				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
 				B4D1C6AD27CE489F005394A2 /* Main.storyboard */,
-				B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */,
 				B4D1C6B027CE48A1005394A2 /* Assets.xcassets */,
 				B4D1C6B227CE48A1005394A2 /* LaunchScreen.storyboard */,
 				B4D1C6B527CE48A1005394A2 /* Info.plist */,

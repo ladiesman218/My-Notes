@@ -12,23 +12,23 @@ class ViewController: UIViewController {
 	
 	var notes = [Note]() {
 		didSet {
-//			addCornerRadius(for: tableView)
+			addCornerRadius(for: tableView)
 		}
 	}
 	
 	var tableHeader: UILabel!
 	
 	@IBOutlet var tableView: UITableView!
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
-//		tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+		
 		// Setup background color
 		view.backgroundColor = .systemGray6
 		tableView.backgroundColor = view.backgroundColor
-				
+
 		// Setup table header
 		tableHeader = UILabel()
 		tableHeader.text = headerString
@@ -43,11 +43,11 @@ class ViewController: UIViewController {
 		self.navigationController?.isToolbarHidden = false
 		
 		self.navigationItem.backButtonTitle = headerString
-
+		
 	}
 	
-	override func viewWillAppear(_ animated: Bool) {
-		// Everytime view will appear, re-load notes array, and reload tableView
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
 		if let files = try? FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: []) {
 			notes = files.map {
 				let data = try! Data(contentsOf: $0)
@@ -57,6 +57,8 @@ class ViewController: UIViewController {
 		tableView.reloadData()
 		addCornerRadius(for: tableView)
 	}
+	
+	
 	
 	@objc func editNew() {
 		guard let detailVC = self.storyboard?.instantiateViewController(withIdentifier: "Note") as? DetailViewController else {
@@ -79,7 +81,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func addCornerRadius(for tableView: UITableView) {
 		if tableView.numberOfRows(inSection: 0) == 2 {
-			print("only one cell")
+			
 			let onlyCell = tableView.cellForRow(at: [0, 1])!
 			onlyCell.layer.cornerRadius = 10
 			return
@@ -98,7 +100,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			lastCell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
 			
 			// Remove last cell's separator
-//			lastCell.separatorInset = UIEdgeInsets(top: 0, left: lastCell.bounds.size.width, bottom: 0, right: lastCell.bounds.size.width)
+			lastCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
 
 		}
 	}
@@ -113,6 +115,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 		if indexPath == [0, 0] {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Search", for: indexPath) as! SearchCell
 			cell.backgroundColor = view.backgroundColor
+			cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
 
 			return cell
 		} else {
@@ -153,6 +156,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 				guard let note = self?.notes.remove(at: indexPath.row - 1) else { return }
 				tableView.deleteRows(at: [indexPath], with: .left)	// This is for the row deletion animation
 				note.removeFromDisk()
+
+				self?.addCornerRadius(for: tableView)
 			}
 			return UISwipeActionsConfiguration(actions: [action])
 		}
@@ -177,4 +182,5 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 		}
 		return tableView.rowHeight
 	}
+	
 }

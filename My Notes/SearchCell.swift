@@ -70,10 +70,7 @@ class SearchCell: UITableViewCell {
 		
 		// This effectively disable select background color
 		self.selectionStyle = .none
-//		self.separatorInset
-//		print(self.frame.size.width)
-//		print(self.bounds.size.width)
-		self.separatorInset = UIEdgeInsets(top: 0, left: self.bounds.size.width, bottom: 0, right: self.bounds.size.width)
+
 	}
 	
 }
