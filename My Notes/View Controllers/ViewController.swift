@@ -122,7 +122,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
 			let note = notes[indexPath.row - 1]
 
-			cell.textLabel?.text = note.content.firstLine
+			var firstLine = note.content.firstLine
+			if firstLine.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+				firstLine = "New Note"
+			}
+			cell.textLabel?.text = firstLine
 			
 			if note.lastModifyTime?.localDateString == Date().localDateString {
 				cell.detailTextLabel?.text = note.lastModifyTime?.localHourMinutesString
