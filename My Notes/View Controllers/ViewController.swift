@@ -65,12 +65,9 @@ class ViewController: UIViewController {
 			fatalError("Can't instantiate detailVC")
 		}
 		
-		let note = Note(content: "", fileName: UUID().uuidString)
-		note.writeToDisk()
+		let note = Note(content: "")
 		
 		detailVC.note = note
-		
-		notes.append(note)
 		
 		self.navigationController?.pushViewController(detailVC, animated: true)
 	}
@@ -84,6 +81,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			
 			let onlyCell = tableView.cellForRow(at: [0, 1])!
 			onlyCell.layer.cornerRadius = 10
+			// Remove last cell's separator
+			onlyCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
+
 			return
 		}
 		tableView.visibleCells.forEach {
@@ -99,7 +99,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			lastCell.layer.cornerRadius = radius
 			lastCell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
 			
-			// Remove last cell's separator
 			lastCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
 
 		}
@@ -121,12 +120,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 		} else {
 			// Other normal cells
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
-			let string = notes[indexPath.row - 1].content
-			let subSequence = string.split(separator: "\n")
-			let title = String(subSequence.first ?? "")
-			let subTitle = (subSequence.count >= 2) ? String(subSequence[1]) : ""
-			cell.textLabel?.text = title
-			cell.detailTextLabel?.text = subTitle
+			let note = notes[indexPath.row - 1]
+
+			cell.textLabel?.text = note.content.firstLine
+			
+			if note.lastModifyTime?.localDateString == Date().localDateString {
+				cell.detailTextLabel?.text = note.lastModifyTime?.localHourMinutesString
+			} else {
+				cell.detailTextLabel?.text = note.lastModifyTime?.localDateString
+			}
+			
+//			cell.detailTextLabel?.text = note.lastModifyTime?.localTime
 
 			cell.layer.backgroundColor = UIColor.systemGray2.cgColor
 			return cell

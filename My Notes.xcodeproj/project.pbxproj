@@ -56,6 +56,22 @@
 			path = "View Controllers";
 			sourceTree = "<group>";
 		};
+		B423A05D27F5E30600F3D2BD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B423A05E27F5E32D00F3D2BD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B47E0FB327EC83CB00329FCF /* Global.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		B4D1C69B27CE489F005394A2 = {
 			isa = PBXGroup;
 			children = (
@@ -80,8 +96,8 @@
 				B423A05C27F595AB00F3D2BD /* View Controllers */,
 				B47E0FB727EEF7F800329FCF /* todo.txt */,
 				B47E0FB527EDC8AD00329FCF /* SearchCell.swift */,
-				B47E0FB327EC83CB00329FCF /* Global.swift */,
-				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
+				B423A05E27F5E32D00F3D2BD /* Views */,
+				B423A05D27F5E30600F3D2BD /* Models */,
 				B4D1C6AD27CE489F005394A2 /* Main.storyboard */,
 				B4D1C6B027CE48A1005394A2 /* Assets.xcassets */,
 				B4D1C6B227CE48A1005394A2 /* LaunchScreen.storyboard */,
