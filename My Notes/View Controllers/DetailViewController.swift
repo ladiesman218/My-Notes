@@ -13,6 +13,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
 	
+	
 	var note: Note!
 	//	var delegate: DetailVCDelegate?
 	
@@ -20,6 +21,7 @@ class DetailViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+
 		textView.text = note.content
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
 		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
@@ -29,21 +31,25 @@ class DetailViewController: UIViewController {
 		let notificationCenter = NotificationCenter.default
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidHideNotification, object: nil)
 		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
+		
 	}
 	
-	
 	override func viewWillDisappear(_ animated: Bool) {
-		note.content = textView.text!
+		let originalContent = note.content
 		
-		guard note.content != "" else {
-			let fileName = note.fileURL.lastPathComponent
-			let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-			let url = path.appendingPathComponent(fileName)
-			try! FileManager.default.removeItem(at: url)
+		// If textView is empty, remove that file if it's already saved, or bail out if it's not
+		guard !textView.text.isEmpty else {
+			if let fileURL = note.fileURL {
+				try! FileManager.default.removeItem(at: fileURL)
+			}
 			return
 		}
-		note.writeToDisk()
 		
+		// If we are still here, then the textView is not empty. Bail out if content hasn't been changed
+		guard originalContent != textView.text else { return }
+		
+		note.content = textView.text
+		note.writeToDisk()
 	}
 	
 	@objc func adjustForKeyboard(notification: Notification) {
@@ -80,4 +86,9 @@ class DetailViewController: UIViewController {
 		self.present(activityController, animated: true)
 		
 	}
+	
+	
 }
+
+
+

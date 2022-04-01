@@ -10,6 +10,8 @@
 		B4285AEF27CE4BDD002CD6C8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */; };
 		B4285AF127CE80E4002CD6C8 /* Notes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4285AF027CE80E4002CD6C8 /* Notes.swift */; };
 		B47E0FB427EC83CB00329FCF /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47E0FB327EC83CB00329FCF /* Global.swift */; };
+		B47E0FB627EDC8AD00329FCF /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47E0FB527EDC8AD00329FCF /* SearchCell.swift */; };
+		B47E0FB827EEF7F800329FCF /* todo.txt in Sources */ = {isa = PBXBuildFile; fileRef = B47E0FB727EEF7F800329FCF /* todo.txt */; };
 		B4D1C6A827CE489F005394A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6A727CE489F005394A2 /* AppDelegate.swift */; };
 		B4D1C6AA27CE489F005394A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */; };
 		B4D1C6AC27CE489F005394A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D1C6AB27CE489F005394A2 /* ViewController.swift */; };
@@ -22,6 +24,8 @@
 		B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		B4285AF027CE80E4002CD6C8 /* Notes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notes.swift; sourceTree = "<group>"; };
 		B47E0FB327EC83CB00329FCF /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		B47E0FB527EDC8AD00329FCF /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
+		B47E0FB727EEF7F800329FCF /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		B4D1C6A427CE489F005394A2 /* My Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Notes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4D1C6A727CE489F005394A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -43,6 +47,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B423A05C27F595AB00F3D2BD /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */,
+				B4D1C6AB27CE489F005394A2 /* ViewController.swift */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		B423A05D27F5E30600F3D2BD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B423A05E27F5E32D00F3D2BD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B47E0FB327EC83CB00329FCF /* Global.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		B4D1C69B27CE489F005394A2 = {
 			isa = PBXGroup;
 			children = (
@@ -64,11 +93,12 @@
 			children = (
 				B4D1C6A727CE489F005394A2 /* AppDelegate.swift */,
 				B4D1C6A927CE489F005394A2 /* SceneDelegate.swift */,
-				B4D1C6AB27CE489F005394A2 /* ViewController.swift */,
-				B47E0FB327EC83CB00329FCF /* Global.swift */,
-				B4285AF027CE80E4002CD6C8 /* Notes.swift */,
+				B423A05C27F595AB00F3D2BD /* View Controllers */,
+				B47E0FB727EEF7F800329FCF /* todo.txt */,
+				B47E0FB527EDC8AD00329FCF /* SearchCell.swift */,
+				B423A05E27F5E32D00F3D2BD /* Views */,
+				B423A05D27F5E30600F3D2BD /* Models */,
 				B4D1C6AD27CE489F005394A2 /* Main.storyboard */,
-				B4285AEE27CE4BDD002CD6C8 /* DetailViewController.swift */,
 				B4D1C6B027CE48A1005394A2 /* Assets.xcassets */,
 				B4D1C6B227CE48A1005394A2 /* LaunchScreen.storyboard */,
 				B4D1C6B527CE48A1005394A2 /* Info.plist */,
@@ -150,6 +180,8 @@
 				B4D1C6AC27CE489F005394A2 /* ViewController.swift in Sources */,
 				B4285AF127CE80E4002CD6C8 /* Notes.swift in Sources */,
 				B47E0FB427EC83CB00329FCF /* Global.swift in Sources */,
+				B47E0FB827EEF7F800329FCF /* todo.txt in Sources */,
+				B47E0FB627EDC8AD00329FCF /* SearchCell.swift in Sources */,
 				B4D1C6A827CE489F005394A2 /* AppDelegate.swift in Sources */,
 				B4D1C6AA27CE489F005394A2 /* SceneDelegate.swift in Sources */,
 				B4285AEF27CE4BDD002CD6C8 /* DetailViewController.swift in Sources */,
