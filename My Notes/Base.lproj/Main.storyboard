@@ -11,7 +11,6 @@
         <!--View Controller-->
         <scene sceneID="aub-i6-Mup">
             <objects>
-
                 <viewController id="Qe8-Us-WbM" customClass="ViewController" customModule="My_Notes" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JQQ-DT-VdM">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>

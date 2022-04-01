@@ -1,3 +1,5 @@
-Remove last cell's separator
+//Remove last cell's separator
 
 //When tapping compose button, don't save the note yet.
+
+//remove a line won't add corner radius for the left lines.

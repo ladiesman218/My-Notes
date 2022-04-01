@@ -12,7 +12,7 @@ class ViewController: UIViewController {
 	
 	var notes = [Note]() {
 		didSet {
-			addCornerRadius(for: tableView)
+//			addCornerRadius(for: tableView)
 		}
 	}
 	
@@ -53,12 +53,12 @@ class ViewController: UIViewController {
 				let data = try! Data(contentsOf: $0)
 				return try! JSONDecoder().decode(Note.self, from: data)
 			}
+			notes.sort { $0.lastModifyTime! > $1.lastModifyTime! }
 		}
+		
 		tableView.reloadData()
 		addCornerRadius(for: tableView)
 	}
-	
-	
 	
 	@objc func editNew() {
 		guard let detailVC = self.storyboard?.instantiateViewController(withIdentifier: "Note") as? DetailViewController else {
@@ -81,14 +81,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			
 			let onlyCell = tableView.cellForRow(at: [0, 1])!
 			onlyCell.layer.cornerRadius = 10
+			onlyCell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
 			// Remove last cell's separator
 			onlyCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
 
 			return
 		}
-		tableView.visibleCells.forEach {
+		
+		// Ignore search cell, then reset separatorInset and cornerRadius for the rest
+		let otherCells = tableView.visibleCells.dropFirst()
+		otherCells.forEach {
 			$0.layer.cornerRadius = 0
+			$0.separatorInset = UIEdgeInsets(top: 0, left: $0.textLabel!.frame.minX, bottom: 0, right: 0)
+
 		}
+
 		let radius = CGFloat(20)
 		if let firstCell = tableView.cellForRow(at: [0, 1]) {
 			firstCell.layer.cornerRadius = radius
