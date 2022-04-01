@@ -65,7 +65,7 @@ class ViewController: UIViewController {
 			fatalError("Can't instantiate detailVC")
 		}
 		
-		let note = Note(content: "")
+		let note = Note(contentData: Data())
 		
 		detailVC.note = note
 		
@@ -129,7 +129,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Note", for: indexPath)
 			let note = notes[indexPath.row - 1]
 
-			var firstLine = note.content.firstLine
+			var firstLine = note.content.string.firstLine //note.content.firstLine
 			if firstLine.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
 				firstLine = "New Note"
 			}
@@ -140,8 +140,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			} else {
 				cell.detailTextLabel?.text = note.lastModifyTime?.localDateString
 			}
-			
-//			cell.detailTextLabel?.text = note.lastModifyTime?.localTime
 
 			cell.layer.backgroundColor = UIColor.systemGray2.cgColor
 			return cell

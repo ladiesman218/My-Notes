@@ -22,7 +22,7 @@ class DetailViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		textView.text = note.content
+		textView.attributedText = note.content
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
 		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
 		self.navigationController?.isToolbarHidden = false
@@ -46,9 +46,9 @@ class DetailViewController: UIViewController {
 		}
 		
 		// If we are still here, then the textView is not empty. Bail out if content hasn't been changed
-		guard originalContent != textView.text else { return }
+		guard originalContent != textView.attributedText else { return }
 		
-		note.content = textView.text
+		note.content = textView.attributedText
 		note.writeToDisk()
 	}
 	
