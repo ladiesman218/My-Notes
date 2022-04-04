@@ -4,4 +4,7 @@
 
 //remove a line won't add corner radius for the left lines.
 
-setter for note content
+//setter for note content
+
+
+Now toolbar will be shown when entering detail vc, even if textView is not firstResponder, thus blocking the user interactions down below in the bottom.

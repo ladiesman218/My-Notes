@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 let headerString = "备忘录"
 
@@ -52,5 +53,15 @@ extension String {
 			let string = String(self[self.startIndex...enterIndex])
 			return (string == "\n") ? "" : string
 		}
+	}
+}
+
+extension UIImage {
+	func resized(factor: CGFloat) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: CGSize(width: self.size.width * factor, height: self.size.height * factor))
+		let new = renderer.image { context in
+			self.draw(in: renderer.format.bounds)
+		}
+		return new
 	}
 }
