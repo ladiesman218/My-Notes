@@ -7,12 +7,7 @@
 
 import UIKit
 
-//protocol DetailVCDelegate {
-//	func noteDidChange(note: Note)
-//}
-
 class DetailViewController: UIViewController {
-	
 	
 	var note: Note!
 	
@@ -25,46 +20,39 @@ class DetailViewController: UIViewController {
 		didSet {
 			switch isToolbarShown {
 			case true:
-//				textView.inputAccessoryView?.isHidden = false
-				textView.inputAccessoryView = toolbar
-				textView.reloadInputViews()
-				showToolbarButton.isHidden = true
+				// set and unset inputAccessoryView will trigger keyboardDidHideNotification notification automatically, while set inputAccessory.isHidden won't.
+s				textView.inputAccessoryView = toolbar
 			case false:
-//				textView.inputAccessoryView?.isHidden = true
 				textView.inputAccessoryView = nil
-				textView.reloadInputViews()
-				showToolbarButton.isHidden = false
 			}
-//			NotificationCenter.default.post(name: UIResponder.keyboardDidChangeFrameNotification, object: self, userInfo: [UIResponder.keyboardFrameEndUserInfoKey: textView])
+			textView.reloadInputViews()
+//			textView.setNeedsDisplay()
+			textView.setNeedsLayout()
+			textView.layoutIfNeeded()
+
+			
+			// Remove all animations for showToolbarButton otherwise showToolbarButton will have a going down transition.
+			self.showToolbarButton.layer.removeAllAnimations()
+			
+			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -toolbar.bounds.height).isActive = true
+
+			showToolbarButton.isHidden = isToolbarShown
 		}
 	}
 	
-//	@objc func displayInputAccessory() {
-//		if isToolbarShown {
-//			textView.inputAccessoryView = toolbar
-//			textView.reloadInputViews()
-//			showToolbarButton.isHidden = true
-//		} else {
-//			textView.inputAccessoryView = nil
-//			textView.reloadInputViews()
-//			showToolbarButton.isHidden = false
-//		}
-//	}
-	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		
+		textView.keyboardDismissMode = .interactive
+		textView.bottomAnchor.constraint(equalTo: textView.keyboardLayoutGuide.topAnchor).isActive = true
+		
 		textView.attributedText = note.content
+		textView.showsHorizontalScrollIndicator = false
+		
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
-//		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
-//		self.navigationController?.isToolbarHidden = false
-//		toolbarItems = [shareButton]
-		
-		let notificationCenter = NotificationCenter.default
-		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidHideNotification, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
-//		notificationCenter.addObserver(self, selector: #selector(displayInputAccessory), name: UIResponder.keyboardWillShowNotification, object: nil)
-		
+		//		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+		self.navigationController?.isToolbarHidden = true
+		//		toolbarItems = [shareButton]
 		configInputAccessory()
 		
 	}
@@ -87,28 +75,7 @@ class DetailViewController: UIViewController {
 		note.writeToDisk()
 	}
 	
-	@objc func adjustForKeyboard(notification: Notification) {
-
-		guard let userInfo = notification.userInfo else {
-			return
-		}
-		
-		let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-		print(keyboardScreenEndFrame)
-		
-		let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
-		
-		if notification.name == UIResponder.keyboardDidHideNotification {
-			textView.contentInset = UIEdgeInsets.zero
-			
-		} else {
-			textView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
-		}
-		
-		textView.scrollIndicatorInsets = textView.contentInset
-		let selectedRange = textView.selectedRange
-		textView.scrollRangeToVisible(selectedRange)
-	}
+	
 	
 	@objc func remove() {
 		textView.text = ""
@@ -127,15 +94,15 @@ class DetailViewController: UIViewController {
 	}
 	
 	func configInputAccessory() {
-
+		
 		let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
-
+		
 		let addTableButton = UIBarButtonItem(image: UIImage(systemName: "tablecells"), style: .plain, target: self, action: #selector(addTable))
 		let adjustFontButton = UIBarButtonItem(image: UIImage(systemName: "textformat.alt"), style: .plain, target: self, action: #selector(adjustFont))
 		let addChecklistButton = UIBarButtonItem(image: UIImage(systemName: "checklist"), style: .plain, target: self, action: #selector(addChecklist))
 		let addImageButton = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(addImage))
 		let addDrawingButton = UIBarButtonItem(image: UIImage(systemName: "pencil.tip.crop.circle"), style: .plain, target: self, action: #selector(addDrawing))
-		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideToolbar))
+		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideToolbar(sender:)))
 		closeButton.tintColor = .gray
 		
 		// Set toolbar
@@ -143,7 +110,7 @@ class DetailViewController: UIViewController {
 		
 		toolbar.items = [addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton]
 		textView.inputAccessoryView = toolbar
-
+		
 		// Config button for showing toolbar items
 		let plusIcon = UIImage(systemName: "plus.circle.fill")!.resized(factor: 2).withTintColor(.systemGray2)
 		showToolbarButton = UIButton()
@@ -155,12 +122,12 @@ class DetailViewController: UIViewController {
 		showToolbarButton.translatesAutoresizingMaskIntoConstraints = false
 		
 		NSLayoutConstraint.activate([
-			showToolbarButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -20),
-			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20),
+			showToolbarButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -15),
+			//			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -15),
 		])
-
+		
 		showToolbarButton.isHidden = (!textView.isFirstResponder || !isToolbarShown)
-
+		
 	}
 	
 	@objc func addTable() {
@@ -183,14 +150,39 @@ class DetailViewController: UIViewController {
 		
 	}
 	
-	@objc func hideToolbar() {
-		isToolbarShown = false
-
+	lazy var transform: CGAffineTransform = {
+		
+		var transform = CGAffineTransform(rotationAngle: -.pi / 3)
+		transform = transform.concatenating(CGAffineTransform(translationX: 0, y: toolbar.bounds.height / 2))
+		return transform
+		
+	}()
+	
+	@objc func hideToolbar(sender: UIBarButtonItem) {
+		UIView.animate(withDuration: 3.15) {
+			sender. transform = self.transform.inverted()
+		} completion: { finished in
+			self.isToolbarShown = false
+		}
 	}
 	
+	
+//	var transform = CGAffineTransform(rotationAngle: -.pi / 3)
+//	transform = transform.concatenating(CGAffineTransform(translationX: 0, y: toolbar.bounds.height / 2))
+	
 	@objc func showToolbar() {
-		isToolbarShown = true
-
+		
+		UIView.animate(withDuration: 0.15) {
+			self.showToolbarButton.transform = self.transform
+		} completion: { _ in
+			self.showToolbarButton.transform = .identity
+			
+			self.isToolbarShown = true
+		}
+	}
+	
+	deinit {
+		NotificationCenter.default.removeObserver(self)
 	}
 }
 

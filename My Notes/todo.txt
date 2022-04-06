@@ -6,5 +6,8 @@
 
 //setter for note content
 
+//when scroll up in textView, if user's touch position collide with soft keyboards top, soft keyboard will go down as user's finger goes down, and disappear when finger has left the screen.
 
-Now toolbar will be shown when entering detail vc, even if textView is not firstResponder, thus blocking the user interactions down below in the bottom.
+when remote keyboard is connected, hide inputAccessoryView won't trigger keyboardLayoutGuide.bottom to move down, hence the showToolbarButton will be up further than it actually needs to be.
+
+memory leak for setting bottom constraint when textView has too many lines
