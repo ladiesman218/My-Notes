@@ -16,27 +16,40 @@ class DetailViewController: UIViewController {
 	var toolbar: UIToolbar!
 	var showToolbarButton: UIButton!
 	
+	lazy var rotateUp: CGAffineTransform = {
+		var transform = CGAffineTransform(rotationAngle: .pi / 2)
+		transform = transform.concatenating(CGAffineTransform(translationX: 0, y: -toolbar.bounds.height))
+		return transform
+	}()
+	
+	lazy var slideOutToBottom: CGAffineTransform = {
+		var transform = CGAffineTransform(translationX: 0, y: self.toolbar.bounds.height)
+		return transform
+	}()
+		
 	var isToolbarShown = true {
 		didSet {
 			switch isToolbarShown {
 			case true:
 				// set and unset inputAccessoryView will trigger keyboardDidHideNotification notification automatically, while set inputAccessory.isHidden won't.
-s				textView.inputAccessoryView = toolbar
+				self.textView.inputAccessoryView?.isHidden = false
+
+				UIView.animate(withDuration: 0.3) {
+					self.textView.inputAccessoryView!.transform = .identity
+					self.showToolbarButton.transform = .identity
+				} completion: { finished in
+					self.showToolbarButton.isHidden = true
+				}
 			case false:
-				textView.inputAccessoryView = nil
+				showToolbarButton.isHidden = false
+				
+				UIView.animate(withDuration: 0.3) {
+					self.showToolbarButton.transform = self.rotateUp
+					self.textView.inputAccessoryView?.transform = self.slideOutToBottom
+				} completion: { finished in
+					self.textView.inputAccessoryView?.isHidden = true
+				}
 			}
-			textView.reloadInputViews()
-//			textView.setNeedsDisplay()
-			textView.setNeedsLayout()
-			textView.layoutIfNeeded()
-
-			
-			// Remove all animations for showToolbarButton otherwise showToolbarButton will have a going down transition.
-			self.showToolbarButton.layer.removeAllAnimations()
-			
-			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -toolbar.bounds.height).isActive = true
-
-			showToolbarButton.isHidden = isToolbarShown
 		}
 	}
 	
@@ -123,10 +136,13 @@ s				textView.inputAccessoryView = toolbar
 		
 		NSLayoutConstraint.activate([
 			showToolbarButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -15),
-			//			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -15),
+			// constraint the button's bottom at textView's bottom, with an additional heigh of toolbar's height, so it's default position should be same with the toolbar's close button's.
+			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: toolbar.bounds.height)
 		])
-		
-		showToolbarButton.isHidden = (!textView.isFirstResponder || !isToolbarShown)
+//		showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -toolbar.bounds.height).isActive = true
+
+//		showToolbarButton.isHidden = isToolbarShown
+		showToolbarButton.isHidden = (!textView.isFirstResponder || isToolbarShown)
 		
 	}
 	
@@ -150,35 +166,16 @@ s				textView.inputAccessoryView = toolbar
 		
 	}
 	
-	lazy var transform: CGAffineTransform = {
-		
-		var transform = CGAffineTransform(rotationAngle: -.pi / 3)
-		transform = transform.concatenating(CGAffineTransform(translationX: 0, y: toolbar.bounds.height / 2))
-		return transform
-		
-	}()
+	
 	
 	@objc func hideToolbar(sender: UIBarButtonItem) {
-		UIView.animate(withDuration: 3.15) {
-			sender. transform = self.transform.inverted()
-		} completion: { finished in
-			self.isToolbarShown = false
-		}
+		self.isToolbarShown = false
+
 	}
 	
-	
-//	var transform = CGAffineTransform(rotationAngle: -.pi / 3)
-//	transform = transform.concatenating(CGAffineTransform(translationX: 0, y: toolbar.bounds.height / 2))
-	
-	@objc func showToolbar() {
 		
-		UIView.animate(withDuration: 0.15) {
-			self.showToolbarButton.transform = self.transform
-		} completion: { _ in
-			self.showToolbarButton.transform = .identity
-			
-			self.isToolbarShown = true
-		}
+	@objc func showToolbar() {
+		self.isToolbarShown = true
 	}
 	
 	deinit {
