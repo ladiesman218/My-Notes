@@ -16,16 +16,6 @@ class DetailViewController: UIViewController {
 	var toolbar: UIToolbar!
 	var showToolbarButton: UIButton!
 	
-	lazy var rotateUp: CGAffineTransform = {
-		var transform = CGAffineTransform(rotationAngle: .pi / 2)
-		transform = transform.concatenating(CGAffineTransform(translationX: 0, y: -toolbar.bounds.height))
-		return transform
-	}()
-	
-	lazy var slideOutToBottom: CGAffineTransform = {
-		var transform = CGAffineTransform(translationX: 0, y: self.toolbar.bounds.height)
-		return transform
-	}()
 		
 	var isToolbarShown = true {
 		didSet {
@@ -44,8 +34,8 @@ class DetailViewController: UIViewController {
 				showToolbarButton.isHidden = false
 				
 				UIView.animate(withDuration: 0.3) {
-					self.showToolbarButton.transform = self.rotateUp
-					self.textView.inputAccessoryView?.transform = self.slideOutToBottom
+					self.showToolbarButton.transform = CGAffineTransform(translationX: 0, y: -self.toolbar.bounds.height).rotated(by: .pi / 2)
+					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.toolbar.bounds.height)
 				} completion: { finished in
 					self.textView.inputAccessoryView?.isHidden = true
 				}
@@ -63,9 +53,9 @@ class DetailViewController: UIViewController {
 		textView.showsHorizontalScrollIndicator = false
 		
 		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
-		//		let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+
 		self.navigationController?.isToolbarHidden = true
-		//		toolbarItems = [shareButton]
+
 		configInputAccessory()
 		
 	}
@@ -139,9 +129,7 @@ class DetailViewController: UIViewController {
 			// constraint the button's bottom at textView's bottom, with an additional heigh of toolbar's height, so it's default position should be same with the toolbar's close button's.
 			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: toolbar.bounds.height)
 		])
-//		showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: -toolbar.bounds.height).isActive = true
 
-//		showToolbarButton.isHidden = isToolbarShown
 		showToolbarButton.isHidden = (!textView.isFirstResponder || isToolbarShown)
 		
 	}
