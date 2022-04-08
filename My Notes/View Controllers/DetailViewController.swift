@@ -13,29 +13,33 @@ class DetailViewController: UIViewController {
 	
 	@IBOutlet var textView: UITextView!
 	
-	var toolbar: UIToolbar!
-	var showToolbarButton: UIButton!
+	var inputAccessoryToolbar: UIToolbar!
+	var showInputAccessoryButton: UIButton!
+	
+	lazy var textViewToKeyboardConstriant = NSLayoutConstraint(item: textView!, attribute: .bottom, relatedBy: .equal, toItem: textView.keyboardLayoutGuide, attribute: .top, multiplier: 1.0, constant: -0)
+	
+	lazy var textViewToNavToolbarConstraint = NSLayoutConstraint(item: textView!, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -navigationController!.toolbar.bounds.height)
 	
 		
-	var isToolbarShown = true {
+	var isInputAccessoryToolbarShown = true {
 		didSet {
-			switch isToolbarShown {
+			switch isInputAccessoryToolbarShown {
 			case true:
 				// set and unset inputAccessoryView will trigger keyboardDidHideNotification notification automatically, while set inputAccessory.isHidden won't.
 				self.textView.inputAccessoryView?.isHidden = false
 
 				UIView.animate(withDuration: 0.3) {
 					self.textView.inputAccessoryView!.transform = .identity
-					self.showToolbarButton.transform = .identity
+					self.showInputAccessoryButton.transform = .identity
 				} completion: { finished in
-					self.showToolbarButton.isHidden = true
+					self.showInputAccessoryButton.isHidden = true
 				}
 			case false:
-				showToolbarButton.isHidden = false
+				showInputAccessoryButton.isHidden = false
 				
-				UIView.animate(withDuration: 0.3) {
-					self.showToolbarButton.transform = CGAffineTransform(translationX: 0, y: -self.toolbar.bounds.height).rotated(by: .pi / 2)
-					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.toolbar.bounds.height)
+				UIView.animate(withDuration: 1.3) {
+					self.showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height).rotated(by: .pi / 2)
+					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
 				} completion: { finished in
 					self.textView.inputAccessoryView?.isHidden = true
 				}
@@ -47,16 +51,13 @@ class DetailViewController: UIViewController {
 		super.viewDidLoad()
 		
 		textView.keyboardDismissMode = .interactive
-		textView.bottomAnchor.constraint(equalTo: textView.keyboardLayoutGuide.topAnchor).isActive = true
+		textView.delegate = self
 		
 		textView.attributedText = note.content
 		textView.showsHorizontalScrollIndicator = false
-		
-		self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(remove))
-
-		self.navigationController?.isToolbarHidden = true
-
-		configInputAccessory()
+	
+		configToolbars()
+		textViewToNavToolbarConstraint.isActive = true
 		
 	}
 	
@@ -78,8 +79,6 @@ class DetailViewController: UIViewController {
 		note.writeToDisk()
 	}
 	
-	
-	
 	@objc func remove() {
 		textView.text = ""
 		self.navigationController?.popViewController(animated: true)
@@ -96,8 +95,8 @@ class DetailViewController: UIViewController {
 		
 	}
 	
-	func configInputAccessory() {
-		
+	func configToolbars() {
+		// Make toolbar buttons
 		let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
 		
 		let addTableButton = UIBarButtonItem(image: UIImage(systemName: "tablecells"), style: .plain, target: self, action: #selector(addTable))
@@ -105,33 +104,39 @@ class DetailViewController: UIViewController {
 		let addChecklistButton = UIBarButtonItem(image: UIImage(systemName: "checklist"), style: .plain, target: self, action: #selector(addChecklist))
 		let addImageButton = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(addImage))
 		let addDrawingButton = UIBarButtonItem(image: UIImage(systemName: "pencil.tip.crop.circle"), style: .plain, target: self, action: #selector(addDrawing))
-		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideToolbar(sender:)))
+		let addNewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(addNewNote))
+		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideInputAccessory(sender:)))
 		closeButton.tintColor = .gray
 		
-		// Set toolbar
-		toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 45))
+		// Config textView's inputAccessoryView toolbar
+		inputAccessoryToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 45))
 		
-		toolbar.items = [addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton]
-		textView.inputAccessoryView = toolbar
+		inputAccessoryToolbar.items = [addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton]
+		textView.inputAccessoryView = inputAccessoryToolbar
 		
-		// Config button for showing toolbar items
+		// Config button for showing inputAccessoryView toolbar
 		let plusIcon = UIImage(systemName: "plus.circle.fill")!.resized(factor: 2).withTintColor(.systemGray2)
-		showToolbarButton = UIButton()
+		showInputAccessoryButton = UIButton()
 		
-		showToolbarButton.setImage(plusIcon, for: .normal)
-		showToolbarButton.addTarget(self, action: #selector(showToolbar), for: .touchUpInside)
-		view.addSubview(showToolbarButton)
+		showInputAccessoryButton.setImage(plusIcon, for: .normal)
+		showInputAccessoryButton.addTarget(self, action: #selector(showInputAccessory), for: .touchUpInside)
+		view.addSubview(showInputAccessoryButton)
 		
-		showToolbarButton.translatesAutoresizingMaskIntoConstraints = false
+		showInputAccessoryButton.translatesAutoresizingMaskIntoConstraints = false
 		
 		NSLayoutConstraint.activate([
-			showToolbarButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -15),
+			showInputAccessoryButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -15),
 			// constraint the button's bottom at textView's bottom, with an additional heigh of toolbar's height, so it's default position should be same with the toolbar's close button's.
-			showToolbarButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: toolbar.bounds.height)
+			showInputAccessoryButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: inputAccessoryToolbar.bounds.height)
 		])
 
-		showToolbarButton.isHidden = (!textView.isFirstResponder || isToolbarShown)
+		showInputAccessoryButton.isHidden = (!textView.isFirstResponder || isInputAccessoryToolbarShown)
 		
+		// Config toolbar for navigation controller
+		self.toolbarItems = [addTableButton, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
+		
+		self.navigationController?.isToolbarHidden = false
+
 	}
 	
 	@objc func addTable() {
@@ -156,14 +161,17 @@ class DetailViewController: UIViewController {
 	
 	
 	
-	@objc func hideToolbar(sender: UIBarButtonItem) {
-		self.isToolbarShown = false
-
+	@objc func hideInputAccessory(sender: UIBarButtonItem) {
+		self.isInputAccessoryToolbarShown = false
 	}
 	
 		
-	@objc func showToolbar() {
-		self.isToolbarShown = true
+	@objc func showInputAccessory() {
+		self.isInputAccessoryToolbarShown = true
+	}
+	
+	@objc func addNewNote() {
+		
 	}
 	
 	deinit {
@@ -173,3 +181,34 @@ class DetailViewController: UIViewController {
 
 
 
+extension DetailViewController: UITextViewDelegate {
+//	func textViewDidBeginEditing(_ textView: UITextView) {
+//		textViewToNavToolbarConstraint.isActive = false
+//		textViewToKeyboardConstriant.isActive = true
+//
+//		navigationController?.toolbar.isHidden = true
+//		view.setNeedsLayout()
+//		view.setNeedsDisplay()
+//	}
+	func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+		textViewToNavToolbarConstraint.isActive = false
+		textViewToKeyboardConstriant.isActive = true
+
+		navigationController?.toolbar.isHidden = true
+		view.setNeedsLayout()
+		view.setNeedsDisplay()
+		
+		return true
+	}
+	
+	
+	func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+		textViewToKeyboardConstriant.isActive = false
+		textViewToNavToolbarConstraint.isActive = true
+		navigationController?.isToolbarHidden = false
+		
+		view.setNeedsLayout()
+		view.setNeedsDisplay()
+		return true
+	}
+}
