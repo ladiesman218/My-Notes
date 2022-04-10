@@ -10,12 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
 	
-	var notes = [Note]() {
-		didSet {
-//			addCornerRadius(for: tableView)
-		}
-	}
-	
+	var notes = [Note]()
 	var tableHeader: UILabel!
 	
 	@IBOutlet var tableView: UITableView!
@@ -180,7 +175,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-		if scrollView.contentOffset.y > tableHeader.frame.height {
+		if scrollView.contentOffset.y > tableHeader.bounds.height {
 			tableHeader.isHidden = true
 			self.title = headerString
 
@@ -189,7 +184,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 			self.title = ""
 		}
 	}
-	
+		
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		if indexPath == [0, 0] {
 			return 70

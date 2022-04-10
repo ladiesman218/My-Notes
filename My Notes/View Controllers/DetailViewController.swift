@@ -40,6 +40,7 @@ class DetailViewController: UIViewController {
 		
 		textView.attributedText = note.content
 		textView.showsHorizontalScrollIndicator = false
+		textView.textColor = .label
 	
 		configToolbars()
 		textView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor).isActive = true
@@ -106,7 +107,6 @@ class DetailViewController: UIViewController {
 		let addChecklistButton = UIBarButtonItem(image: UIImage(systemName: "checklist"), style: .plain, target: self, action: #selector(addChecklist))
 		let addImageButton = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(addImage))
 		let addDrawingButton = UIBarButtonItem(image: UIImage(systemName: "pencil.tip.crop.circle"), style: .plain, target: self, action: #selector(addDrawing))
-		let addNewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(addNewNote))
 		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideInputAccessory(sender:)))
 		closeButton.tintColor = .gray
 
@@ -183,6 +183,7 @@ extension DetailViewController: UITextViewDelegate {
 		navigationController?.toolbar.isHidden = true
 		let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
 		navigationItem.rightBarButtonItem = doneButton
+		
 	}
 	func textViewDidEndEditing(_ textView: UITextView) {
 		navigationController?.toolbar.isHidden = false
