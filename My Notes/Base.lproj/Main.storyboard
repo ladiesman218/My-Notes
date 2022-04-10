@@ -94,8 +94,8 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="MYc-sT-WFl" firstAttribute="top" secondItem="hQs-Lb-YEW" secondAttribute="top" id="2Qd-xO-dAd"/>
-                            <constraint firstItem="MYc-sT-WFl" firstAttribute="centerX" secondItem="hQs-Lb-YEW" secondAttribute="centerX" id="bbf-Eg-Shc"/>
-                            <constraint firstItem="MYc-sT-WFl" firstAttribute="leading" secondItem="hQs-Lb-YEW" secondAttribute="leading" id="egl-gm-1bl"/>
+                            <constraint firstItem="hQs-Lb-YEW" firstAttribute="trailing" secondItem="MYc-sT-WFl" secondAttribute="trailing" id="ZXG-7b-klX"/>
+                            <constraint firstItem="MYc-sT-WFl" firstAttribute="leading" secondItem="hQs-Lb-YEW" secondAttribute="leading" id="ftJ-lT-cqR"/>
                         </constraints>
                     </view>
                     <connections>

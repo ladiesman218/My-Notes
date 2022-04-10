@@ -16,34 +16,32 @@ class DetailViewController: UIViewController {
 	var inputAccessoryToolbar: UIToolbar!
 	var showInputAccessoryButton: UIButton!
 	
-	lazy var textViewToKeyboardConstriant = NSLayoutConstraint(item: textView!, attribute: .bottom, relatedBy: .equal, toItem: textView.keyboardLayoutGuide, attribute: .top, multiplier: 1.0, constant: -0)
-	
-	lazy var textViewToNavToolbarConstraint = NSLayoutConstraint(item: textView!, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -navigationController!.toolbar.bounds.height)
-	
-		
 	var isInputAccessoryToolbarShown = true {
 		didSet {
-			switch isInputAccessoryToolbarShown {
-			case true:
+			toggleInputAccessory(show: isInputAccessoryToolbarShown, animated: true)
+//			switch isInputAccessoryToolbarShown {
+//			case true:
 				// set and unset inputAccessoryView will trigger keyboardDidHideNotification notification automatically, while set inputAccessory.isHidden won't.
-				self.textView.inputAccessoryView?.isHidden = false
-
-				UIView.animate(withDuration: 0.3) {
-					self.textView.inputAccessoryView!.transform = .identity
-					self.showInputAccessoryButton.transform = .identity
-				} completion: { finished in
-					self.showInputAccessoryButton.isHidden = true
-				}
-			case false:
-				showInputAccessoryButton.isHidden = false
+//				self.textView.inputAccessoryView?.isHidden = false
+//
+//				UIView.animate(withDuration: 0.3) {
+//					self.textView.inputAccessoryView!.transform = .identity
+//					self.showInputAccessoryButton.transform = .identity
+//				} completion: { finished in
+//					self.showInputAccessoryButton.isHidden = true
+//				}
 				
-				UIView.animate(withDuration: 1.3) {
-					self.showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height).rotated(by: .pi / 2)
-					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
-				} completion: { finished in
-					self.textView.inputAccessoryView?.isHidden = true
-				}
-			}
+//			case false:
+//				showInputAccessoryButton.isHidden = false
+//
+//				UIView.animate(withDuration: 0.3) {
+//					self.showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height / 2).rotated(by: .pi / 2)
+//					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
+//				} completion: { finished in
+//					self.textView.inputAccessoryView?.isHidden = true
+//				}
+				
+//			}
 		}
 	}
 	
@@ -56,10 +54,12 @@ class DetailViewController: UIViewController {
 		textView.attributedText = note.content
 		textView.showsHorizontalScrollIndicator = false
 	
-		configToolbars()
-		textViewToNavToolbarConstraint.isActive = true
 		
+		
+		configToolbars()
+		textView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor).isActive = true
 	}
+	
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		let originalContent = note.content
@@ -79,21 +79,21 @@ class DetailViewController: UIViewController {
 		note.writeToDisk()
 	}
 	
-	@objc func remove() {
-		textView.text = ""
-		self.navigationController?.popViewController(animated: true)
-	}
+//	@objc func remove() {
+//		textView.text = ""
+//		self.navigationController?.popViewController(animated: true)
+//	}
 	
-	@objc func shareTapped() {
-		guard let text = textView.text, text != "" else { return }
-		
-		
-		let activityController = UIActivityViewController(activityItems: [text], applicationActivities: [
-		])
-		activityController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
-		self.present(activityController, animated: true)
-		
-	}
+//	@objc func shareTapped() {
+//		guard let text = textView.text, text != "" else { return }
+//
+//
+//		let activityController = UIActivityViewController(activityItems: [text], applicationActivities: [
+//		])
+//		activityController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+//		self.present(activityController, animated: true)
+//
+//	}
 	
 	func configToolbars() {
 		// Make toolbar buttons
@@ -134,7 +134,7 @@ class DetailViewController: UIViewController {
 		
 		// Config toolbar for navigation controller
 		self.toolbarItems = [addTableButton, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
-		
+
 		self.navigationController?.isToolbarHidden = false
 
 	}
@@ -162,12 +162,12 @@ class DetailViewController: UIViewController {
 	
 	
 	@objc func hideInputAccessory(sender: UIBarButtonItem) {
-		self.isInputAccessoryToolbarShown = false
+		isInputAccessoryToolbarShown = false
 	}
 	
 		
 	@objc func showInputAccessory() {
-		self.isInputAccessoryToolbarShown = true
+		isInputAccessoryToolbarShown = true
 	}
 	
 	@objc func addNewNote() {
@@ -182,33 +182,57 @@ class DetailViewController: UIViewController {
 
 
 extension DetailViewController: UITextViewDelegate {
-//	func textViewDidBeginEditing(_ textView: UITextView) {
-//		textViewToNavToolbarConstraint.isActive = false
-//		textViewToKeyboardConstriant.isActive = true
-//
-//		navigationController?.toolbar.isHidden = true
-//		view.setNeedsLayout()
-//		view.setNeedsDisplay()
-//	}
-	func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-		textViewToNavToolbarConstraint.isActive = false
-		textViewToKeyboardConstriant.isActive = true
 
+	func textViewDidBeginEditing(_ textView: UITextView) {
 		navigationController?.toolbar.isHidden = true
-		view.setNeedsLayout()
-		view.setNeedsDisplay()
-		
-		return true
+		let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
+		navigationItem.rightBarButtonItem = doneButton
+	}
+	func textViewDidEndEditing(_ textView: UITextView) {
+		navigationController?.toolbar.isHidden = false
+		navigationItem.rightBarButtonItem = nil
+	}
+	
+	@objc func done() {
+		toggleInputAccessory(show: true, animated: false)
+		textView.resignFirstResponder()
 	}
 	
 	
-	func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-		textViewToKeyboardConstriant.isActive = false
-		textViewToNavToolbarConstraint.isActive = true
-		navigationController?.isToolbarHidden = false
-		
-		view.setNeedsLayout()
-		view.setNeedsDisplay()
-		return true
+	func toggleInputAccessory(show: Bool, animated: Bool) {
+		if show {
+			textView.inputAccessoryView?.isHidden = false
+
+			if animated {
+
+				UIView.animate(withDuration: 0.3) {
+					self.textView.inputAccessoryView!.transform = .identity
+					self.showInputAccessoryButton.transform = .identity
+				} completion: { finished in
+					self.showInputAccessoryButton.isHidden = true
+					
+				}
+			} else {
+				textView.inputAccessoryView!.transform = .identity
+				showInputAccessoryButton.transform = .identity
+				showInputAccessoryButton.isHidden = true
+			}
+			
+			
+		} else {
+			showInputAccessoryButton.isHidden = false
+			if animated {
+				UIView.animate(withDuration: 0.3) {
+					self.showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height / 2).rotated(by: .pi / 2)
+					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
+				} completion: { finished in
+					self.textView.inputAccessoryView?.isHidden = true
+				}
+			} else {
+				showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height / 2).rotated(by: .pi / 2)
+				textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
+				textView.inputAccessoryView?.isHidden = true
+			}
+		}
 	}
 }
