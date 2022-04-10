@@ -15,33 +15,20 @@ class DetailViewController: UIViewController {
 	
 	var inputAccessoryToolbar: UIToolbar!
 	var showInputAccessoryButton: UIButton!
+//	// Make toolbar buttons
+//	let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
+//
+//	var addTableButton: UIBarButtonItem!
+//	var adjustFontButton: UIBarButtonItem!
+//	var addChecklistButton: UIBarButtonItem!
+//	var addImageButton: UIBarButtonItem!
+//	var addDrawingButton: UIBarButtonItem!
+//	var addNewButton: UIBarButtonItem!
+//	var closeButton: UIBarButtonItem!
 	
 	var isInputAccessoryToolbarShown = true {
 		didSet {
 			toggleInputAccessory(show: isInputAccessoryToolbarShown, animated: true)
-//			switch isInputAccessoryToolbarShown {
-//			case true:
-				// set and unset inputAccessoryView will trigger keyboardDidHideNotification notification automatically, while set inputAccessory.isHidden won't.
-//				self.textView.inputAccessoryView?.isHidden = false
-//
-//				UIView.animate(withDuration: 0.3) {
-//					self.textView.inputAccessoryView!.transform = .identity
-//					self.showInputAccessoryButton.transform = .identity
-//				} completion: { finished in
-//					self.showInputAccessoryButton.isHidden = true
-//				}
-				
-//			case false:
-//				showInputAccessoryButton.isHidden = false
-//
-//				UIView.animate(withDuration: 0.3) {
-//					self.showInputAccessoryButton.transform = CGAffineTransform(translationX: 0, y: -self.inputAccessoryToolbar.bounds.height / 2).rotated(by: .pi / 2)
-//					self.textView.inputAccessoryView?.transform = CGAffineTransform(translationX: 0, y: self.inputAccessoryToolbar.bounds.height)
-//				} completion: { finished in
-//					self.textView.inputAccessoryView?.isHidden = true
-//				}
-				
-//			}
 		}
 	}
 	
@@ -54,14 +41,13 @@ class DetailViewController: UIViewController {
 		textView.attributedText = note.content
 		textView.showsHorizontalScrollIndicator = false
 	
-		
-		
 		configToolbars()
 		textView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor).isActive = true
 	}
 	
 	
 	override func viewWillDisappear(_ animated: Bool) {
+		navigationController?.toolbar.isHidden = false
 		let originalContent = note.content
 		
 		// If textView is empty, remove that file if it's already saved, or bail out if it's not
@@ -77,6 +63,22 @@ class DetailViewController: UIViewController {
 		
 		note.content = textView.attributedText
 		note.writeToDisk()
+	}
+	
+	
+	override func viewWillAppear(_ animated: Bool) {
+		// Make toolbar buttons
+		let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
+
+		let addTableButton = UIBarButtonItem(image: UIImage(systemName: "tablecells"), style: .plain, target: self, action: #selector(addTable))
+		let addImageButton = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(addImage))
+		let addDrawingButton = UIBarButtonItem(image: UIImage(systemName: "pencil.tip.crop.circle"), style: .plain, target: self, action: #selector(addDrawing))
+		let addNewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(addNewNote))
+
+		// Config toolbar for navigation controller
+		self.toolbarItems = [addTableButton, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
+
+		self.navigationController?.isToolbarHidden = false
 	}
 	
 //	@objc func remove() {
@@ -98,7 +100,7 @@ class DetailViewController: UIViewController {
 	func configToolbars() {
 		// Make toolbar buttons
 		let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
-		
+
 		let addTableButton = UIBarButtonItem(image: UIImage(systemName: "tablecells"), style: .plain, target: self, action: #selector(addTable))
 		let adjustFontButton = UIBarButtonItem(image: UIImage(systemName: "textformat.alt"), style: .plain, target: self, action: #selector(adjustFont))
 		let addChecklistButton = UIBarButtonItem(image: UIImage(systemName: "checklist"), style: .plain, target: self, action: #selector(addChecklist))
@@ -107,10 +109,9 @@ class DetailViewController: UIViewController {
 		let addNewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(addNewNote))
 		let closeButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(hideInputAccessory(sender:)))
 		closeButton.tintColor = .gray
-		
+
 		// Config textView's inputAccessoryView toolbar
 		inputAccessoryToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 45))
-		
 		inputAccessoryToolbar.items = [addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton]
 		textView.inputAccessoryView = inputAccessoryToolbar
 		
@@ -132,11 +133,6 @@ class DetailViewController: UIViewController {
 
 		showInputAccessoryButton.isHidden = (!textView.isFirstResponder || isInputAccessoryToolbarShown)
 		
-		// Config toolbar for navigation controller
-		self.toolbarItems = [addTableButton, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
-
-		self.navigationController?.isToolbarHidden = false
-
 	}
 	
 	@objc func addTable() {
