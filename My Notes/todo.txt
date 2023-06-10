@@ -12,3 +12,7 @@
 
 
 memory leak for setting bottom constraint when textView has too many lines
+
+show input accessory view button's horizontal position in landscape mode
+
+

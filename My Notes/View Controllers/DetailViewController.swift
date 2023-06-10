@@ -71,13 +71,13 @@ class DetailViewController: UIViewController {
 		// Make toolbar buttons
 		let spacer = UIBarButtonItem(systemItem: .flexibleSpace)
 
-		let addTableButton = UIBarButtonItem(image: UIImage(systemName: "tablecells"), style: .plain, target: self, action: #selector(addTable))
+		let addCheckList = UIBarButtonItem(image: UIImage(systemName: "checklist"), style: .plain, target: self, action: #selector(addChecklist))
 		let addImageButton = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(addImage))
 		let addDrawingButton = UIBarButtonItem(image: UIImage(systemName: "pencil.tip.crop.circle"), style: .plain, target: self, action: #selector(addDrawing))
 		let addNewButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(addNewNote))
 
 		// Config toolbar for navigation controller
-		self.toolbarItems = [addTableButton, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
+		self.toolbarItems = [addCheckList, spacer, addImageButton, spacer, addDrawingButton, spacer, addNewButton]
 
 		self.navigationController?.isToolbarHidden = false
 	}
@@ -112,7 +112,7 @@ class DetailViewController: UIViewController {
 
 		// Config textView's inputAccessoryView toolbar
 		inputAccessoryToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 45))
-		inputAccessoryToolbar.items = [addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton]
+		inputAccessoryToolbar.items = [spacer, addTableButton, spacer, adjustFontButton, spacer, addChecklistButton, spacer, addImageButton, spacer, addDrawingButton, spacer, closeButton, spacer]
 		textView.inputAccessoryView = inputAccessoryToolbar
 		
 		// Config button for showing inputAccessoryView toolbar
@@ -126,7 +126,7 @@ class DetailViewController: UIViewController {
 		showInputAccessoryButton.translatesAutoresizingMaskIntoConstraints = false
 		
 		NSLayoutConstraint.activate([
-			showInputAccessoryButton.trailingAnchor.constraint(equalTo: textView.trailingAnchor, constant: -15),
+			showInputAccessoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -textView.bounds.width * 0.1),
 			// constraint the button's bottom at textView's bottom, with an additional heigh of toolbar's height, so it's default position should be same with the toolbar's close button's.
 			showInputAccessoryButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor, constant: inputAccessoryToolbar.bounds.height)
 		])
